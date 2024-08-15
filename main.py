@@ -75,5 +75,5 @@ if __name__ == "__main__":
     main_window.show() #display the main window form
     app.exec_() #run the app
 
-
+ 
 #current -> https://youtu.be/f_9NBdSAo-g?t=7689
