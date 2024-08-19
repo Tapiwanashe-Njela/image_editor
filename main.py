@@ -1,9 +1,10 @@
 #Import modules
+import os
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QListWidget, QComboBox, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout
-from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog, QListWidget, QComboBox, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout
+from PyQt5.QtGui import QFont, QPixmap
 
-class ImageEditor(QWidget):
+class PictureQt(QWidget):
     def __init__(self):
         super().__init__()
 
@@ -38,6 +39,10 @@ class ImageEditor(QWidget):
         
         self.image_placeholder_label = QLabel("Image will appear here")
 
+        # Connect signals
+        self.select_folder_button.clicked.connect(self.get_working_directory)
+
+
         #all design here
         master_layout = QHBoxLayout()
         column1 = QVBoxLayout()
@@ -60,18 +65,47 @@ class ImageEditor(QWidget):
         column2.addWidget(self.image_placeholder_label)
 
         #concat the layouts
-        master_layout.addLayout(column1, 20) #adjust the stretch of column 1
-        master_layout.addLayout(column2, 80) #adjust the stretch of column 2
+        master_layout.addLayout(column1, 20) #adjust the stretch% of column 1
+        master_layout.addLayout(column2, 80) #adjust the stretch% of column 2
 
         #set the master; in this case it is the master_row
         self.setLayout(master_layout)
 
 
 
+    #ALL functionality
+    #working_directoy = QFileDialog.getExistingDirectory()
+
+
+
+    #Fliter files and extensions
+    def filter(self, files, extensions):
+        results = []
+        #loop through every file in folders
+        for file in files:
+            for ext in extensions:
+                if file.endswith(ext):
+                    results.append(file)
+        return results #return the appended list
+
+
+    #Choose current working directory
+    def get_working_directory(self): #scan all dirs for files
+        global working_directory #since it is defined outside
+        working_directory = QFileDialog.getExistingDirectory() #get the user's working directory
+        extensions = ["jpg","jpeg","png","svg"]
+        file_names = self.filter(os.listdir(working_directory), extensions) #list dr is like ls command
+        #load the files in the file_list widget but first ensure emptiness by clearing
+        self.file_list.clear()
+        #loop through file names, adding each instance to file_list widget
+        for file in file_names:
+            self.file_list.addItem(file)
+
+        
 #entrypoint; show and run the app
 if __name__ == "__main__":
     app = QApplication([]) #allows us to create and execute our app; takes in an empty list ALWAYS
-    main_window = ImageEditor() #object to create a new form (window) that we will be editing
+    main_window = PictureQt() #object to create a new form (window) that we will be editing
     main_window.show() #display the main window form
     app.exec_() #run the app
 
