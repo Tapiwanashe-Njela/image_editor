@@ -3,6 +3,7 @@ import os
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog, QListWidget, QComboBox, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout
 from PyQt5.QtGui import QFont, QPixmap
+from PIL import Image, ImageFilter, ImageEnhance
 
 class PictureQt(QWidget):
     def __init__(self):
@@ -101,6 +102,20 @@ class PictureQt(QWidget):
         for file in file_names:
             self.file_list.addItem(file)
 
+class Editor(): #this class programs all of our buttons
+    def __init__(self):
+        self.image = None 
+        self.original = None #holds the original image to allow us to revert changes 
+        self.file_name = None  
+        self.save_folder = "edits/" #new folder with the path as an extension to the current file path of the working dir 
+
+    #methods to show, load and edit the images
+    #load an image; load the filename so that we can use that filename to load into our program as image
+    def load_image(self, filename):
+        self.file_name = filename #override None to whatever we pass in as the second argument
+        full_path = os.path.join(working_directory, filename)
+        self.image = Image.open(full_path) #Open the image as a file
+        self.original = self.image.copy() #save a copy for backup purposes
         
 #entrypoint; show and run the app
 if __name__ == "__main__":
@@ -110,4 +125,4 @@ if __name__ == "__main__":
     app.exec_() #run the app
 
  
-#current -> https://youtu.be/f_9NBdSAo-g?t=7689
+#current -> https://youtu.be/f_9NBdSAo-g?t=10592
