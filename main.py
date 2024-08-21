@@ -45,7 +45,8 @@ class PictureQt(QWidget):
 
         # Connect signals
         self.select_folder_button.clicked.connect(self.get_working_directory)
-        self.file_list.currentRowChanged.connect(display_image) #when we click another item in the list(i.e changing the row)
+        self.file_list.currentRowChanged.connect(self.display_image) #when we click another item in the list(i.e changing the row)
+        self.bw_button.clicked.connect(main.black_and_white)
 
 
         #all design here
@@ -80,7 +81,7 @@ class PictureQt(QWidget):
 
 
     #ALL functionality
-    #working_directoy = QFileDialog.getExistingDirectory()
+    working_directoy = ""
 
 
 
@@ -107,6 +108,14 @@ class PictureQt(QWidget):
         for file in file_names:
             self.file_list.addItem(file)
 
+
+    #function to always display the image we click from our file list; connects with row change event
+    def display_image(self):
+        if main_window.file_list.currentRow() >= 0: #check if we have values in the file list
+            file_name = main_window.file_list.currentItem().text()#get the text value of the item that we click in the filelist
+            main.load_image(file_name)
+            main.show_image(os.path.join(working_directory, main.file_name)) 
+
 class Editor(): #this class programs all of our buttons
     def __init__(self):
         self.image = None 
@@ -126,8 +135,8 @@ class Editor(): #this class programs all of our buttons
 
     def save_image(self): #to save to our self.save_folder under edits/
         path = os.path.join(working_directory, self.save_folder) #path to our save folder
-        if not (os.path.exists(path) or os.path.isdir): #run if path doesn't exist already or if we are not already there
-            os.mkdir(path) #create a directory if so
+        if not (os.path.exists(path)): #run if path doesn't exist already
+            os.mkdir(path) #create a directory if path doesn't exist
         full_path = os.path.join(path, self.file_name) #to get full path of the new path 
         self.image.save(full_path) #save new path
     
@@ -140,20 +149,20 @@ class Editor(): #this class programs all of our buttons
         main_window.image_placeholder_label.setPixmap(image) #set an image to a Qt widget 
         main_window.image_placeholder_label.show() #then show to screen after
 
-        
-#function to always display the image we click from our file list; connects with row change event
-def display_image():
-    if main_window.file_list.currentRow() >= 0: #check if we have values in the file list
-        file_name = main_window.file_list.currentItem().text()#get the text value of the item that we click in the filelist
-        main.load_image(file_name)
-        main.show_image(os.path.join(working_directory, main.file_name)) 
+
+    def black_and_white(self):
+        self.image = self.image.convert("L")
+        self.save_image()
+        image_path = os.path.join(working_directory, self.save_folder, self.file_name)
+        main_window.image_placeholder_label.hide()
+        self.show_image(image_path)
 
 
 #entrypoint; show and run the app
 if __name__ == "__main__":
     app = QApplication([]) #allows us to create and execute our app; takes in an empty list ALWAYS
-    main_window = PictureQt() #object to create a new form (window) that we will be editing
     main = Editor() #obj of Editor class
+    main_window = PictureQt() #object to create a new form (window) that we will be editing
     main_window.show() #display the main window form
     app.exec_() #run the app
 
