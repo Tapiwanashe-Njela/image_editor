@@ -2,7 +2,7 @@ from PIL import Image, ImageFilter, ImageEnhance
 
     # - Image -
 with Image.open("Baby.jpg") as picture:
-    #picture.show()
+    #picture.show() #To show the picture on the screen
 
     black_white = picture.convert("L") #always takes L as argument
     black_white.save("b_w_Baby.jpg")
