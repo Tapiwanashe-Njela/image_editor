@@ -47,6 +47,9 @@ class PictureQt(QWidget):
         self.select_folder_button.clicked.connect(self.get_working_directory)
         self.file_list.currentRowChanged.connect(self.display_image) #when we click another item in the list(i.e changing the row)
         self.bw_button.clicked.connect(main.black_and_white)
+        self.left_button.clicked.connect(main.left)
+        self.right_button.clicked.connect(main.right)
+
 
 
         #all design here
@@ -81,7 +84,7 @@ class PictureQt(QWidget):
 
 
     #ALL functionality
-    working_directoy = ""
+    #working_directoy = ""
 
 
 
@@ -147,6 +150,7 @@ class Editor(): #this class programs all of our buttons
         width, height = main_window.image_placeholder_label.width(), main_window.image_placeholder_label.height() #get LxW dims of label to be replaced
         image = image.scaled(width, height, Qt.KeepAspectRatio) #scale up the image to the LxW; + prevent it from being distorted using Qt
         main_window.image_placeholder_label.setPixmap(image) #set an image to a Qt widget 
+        main_window.image_placeholder_label.setAlignment(Qt.AlignCenter) #set alignment of the label to be replaced to the center
         main_window.image_placeholder_label.show() #then show to screen after
 
 
@@ -157,6 +161,21 @@ class Editor(): #this class programs all of our buttons
         main_window.image_placeholder_label.hide()
         self.show_image(image_path)
 
+    def left(self):
+        self.image = self.image.transpose(Image.ROTATE_90)
+        #the next 3 lines will be repeated
+        self.save_image()
+        image_path = os.path.join(working_directory, self.save_folder, self.file_name)
+        main_window.image_placeholder_label.hide()
+        self.show_image(image_path)
+
+    def right(self):
+        self.image = self.image.transpose(Image.ROTATE_270)
+        #the next 3 lines will be repeated
+        self.save_image()
+        image_path = os.path.join(working_directory, self.save_folder, self.file_name)
+        main_window.image_placeholder_label.hide()
+        self.show_image(image_path)
 
 #entrypoint; show and run the app
 if __name__ == "__main__":
