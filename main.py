@@ -1,7 +1,7 @@
 #Import modules
 import os
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog, QListWidget, QComboBox, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog, QListWidget, QMessageBox, QComboBox, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout
 from PyQt5.QtGui import QFont, QPixmap#allows us to load images into PyQt
 from PIL import Image, ImageFilter, ImageEnhance
 
@@ -26,6 +26,8 @@ class PictureQt(QWidget):
         self.color_button = QPushButton("Color")
         self.contrast_button = QPushButton("Contrast")
         self.blur_button = QPushButton("Blur")
+        self.exit_button = QPushButton("Exit")
+
 
 
         #create dropdown box and add items to it
@@ -44,12 +46,12 @@ class PictureQt(QWidget):
 
 
         # Connect signals
+        self.exit_button.clicked.connect(self.close)
         self.select_folder_button.clicked.connect(self.get_working_directory)
         self.file_list.currentRowChanged.connect(self.display_image) #when we click another item in the list(i.e changing the row)
         self.bw_button.clicked.connect(main.black_and_white)
         self.left_button.clicked.connect(main.left)
         self.right_button.clicked.connect(main.right)
-
 
 
         #all design here
@@ -70,6 +72,8 @@ class PictureQt(QWidget):
         column1.addWidget(self.color_button)
         column1.addWidget(self.contrast_button)
         column1.addWidget(self.blur_button)
+        column1.addWidget(self.exit_button)
+
 
         #add widgets to column 1
         column2.addWidget(self.image_placeholder_label)
@@ -81,11 +85,30 @@ class PictureQt(QWidget):
         #set the master; in this case it is the master_row
         self.setLayout(master_layout)
 
+        #Disable buttons before picture selection
+        self.disable_buttons() 
 
+    
+    #ALL functionalitty
+    def disable_buttons(self):
+        self.left_button.setEnabled(False)
+        self.right_button.setEnabled(False)
+        self.mirror_button.setEnabled(False)
+        self.sharpness_button.setEnabled(False)
+        self.bw_button.setEnabled(False)
+        self.color_button.setEnabled(False)
+        self.contrast_button.setEnabled(False)
+        self.blur_button.setEnabled(False)
 
-    #ALL functionality
-    #working_directoy = ""
-
+    def enable_buttons(self):
+        self.left_button.setEnabled(True)
+        self.right_button.setEnabled(True)
+        self.mirror_button.setEnabled(True)
+        self.sharpness_button.setEnabled(True)
+        self.bw_button.setEnabled(True)
+        self.color_button.setEnabled(True)
+        self.contrast_button.setEnabled(True)
+        self.blur_button.setEnabled(True)
 
 
     #Fliter files and extensions
@@ -118,6 +141,8 @@ class PictureQt(QWidget):
             file_name = main_window.file_list.currentItem().text()#get the text value of the item that we click in the filelist
             main.load_image(file_name)
             main.show_image(os.path.join(working_directory, main.file_name)) 
+            self.enable_buttons() #enable button functionality after image click
+
 
 class Editor(): #this class programs all of our buttons
     def __init__(self):
@@ -176,6 +201,7 @@ class Editor(): #this class programs all of our buttons
         image_path = os.path.join(working_directory, self.save_folder, self.file_name)
         main_window.image_placeholder_label.hide()
         self.show_image(image_path)
+        
 
 #entrypoint; show and run the app
 if __name__ == "__main__":
