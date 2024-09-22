@@ -23,7 +23,7 @@ class PictureQt(QWidget):
         self.mirror_button = QPushButton("Mirror")
         self.sharpness_button = QPushButton("Sharpness")
         self.bw_button = QPushButton("B/W")
-        self.color_button = QPushButton("Color")
+        self.original_image_button = QPushButton("Original Image")
         self.contrast_button = QPushButton("Contrast")
         self.blur_button = QPushButton("Blur")
         self.exit_button = QPushButton("Exit")
@@ -38,7 +38,7 @@ class PictureQt(QWidget):
         self.filter_combo_box.addItem("Mirror")
         self.filter_combo_box.addItem("Sharpen")
         self.filter_combo_box.addItem("B/W")
-        self.filter_combo_box.addItem("Color")
+        self.filter_combo_box.addItem("original_image")
         self.filter_combo_box.addItem("Contrast")
         self.filter_combo_box.addItem("Blur")
         
@@ -52,6 +52,13 @@ class PictureQt(QWidget):
         self.bw_button.clicked.connect(main.black_and_white)
         self.left_button.clicked.connect(main.left)
         self.right_button.clicked.connect(main.right)
+        self.original_image_button.clicked.connect(main.original_image)
+        self.mirror_button.clicked.connect(main.mirror)
+        self.sharpness_button.clicked.connect(main.sharpness)
+        self.contrast_button.clicked.connect(main.contrast)
+        self.blur_button.clicked.connect(main.blur)
+
+
 
 
         #all design here
@@ -69,7 +76,7 @@ class PictureQt(QWidget):
         column1.addWidget(self.mirror_button)
         column1.addWidget(self.sharpness_button)
         column1.addWidget(self.bw_button)
-        column1.addWidget(self.color_button)
+        column1.addWidget(self.original_image_button)
         column1.addWidget(self.contrast_button)
         column1.addWidget(self.blur_button)
         column1.addWidget(self.exit_button)
@@ -96,7 +103,7 @@ class PictureQt(QWidget):
         self.mirror_button.setEnabled(False)
         self.sharpness_button.setEnabled(False)
         self.bw_button.setEnabled(False)
-        self.color_button.setEnabled(False)
+        self.original_image_button.setEnabled(False)
         self.contrast_button.setEnabled(False)
         self.blur_button.setEnabled(False)
 
@@ -106,7 +113,7 @@ class PictureQt(QWidget):
         self.mirror_button.setEnabled(True)
         self.sharpness_button.setEnabled(True)
         self.bw_button.setEnabled(True)
-        self.color_button.setEnabled(True)
+        self.original_image_button.setEnabled(True)
         self.contrast_button.setEnabled(True)
         self.blur_button.setEnabled(True)
 
@@ -144,10 +151,10 @@ class PictureQt(QWidget):
             self.enable_buttons() #enable button functionality after image click
 
 
-class Editor(): #this class programs all of our buttons
+class Editor(): #this class provides the functionality of our app.
     def __init__(self):
         self.image = None 
-        self.original = None #holds the original image to allow us to revert changes 
+        self.original = None #holds the original image to allow us to revert changes
         self.file_name = None  
         self.save_folder = "edits/" #new folder with the path as an extension to the current file path of the working dir 
 
@@ -201,7 +208,49 @@ class Editor(): #this class programs all of our buttons
         image_path = os.path.join(working_directory, self.save_folder, self.file_name)
         main_window.image_placeholder_label.hide()
         self.show_image(image_path)
-        
+
+    def original_image(self):
+        self.image = self.original
+        #the next 3 lines will be repeated
+        self.save_image()
+        image_path = os.path.join(working_directory, self.save_folder, self.file_name)
+        main_window.image_placeholder_label.hide()
+        self.show_image(image_path)
+
+    def mirror(self):
+        self.image = self.image.transpose(Image.FLIP_LEFT_RIGHT)
+        #the next 3 lines will be repeated
+        self.save_image()
+        image_path = os.path.join(working_directory, self.save_folder, self.file_name)
+        main_window.image_placeholder_label.hide()
+        self.show_image(image_path)
+
+    def sharpness(self):
+        self.image = self.image.filter(ImageFilter.SHARPEN) 
+        #the next 3 lines will be repeated
+        self.save_image()
+        image_path = os.path.join(working_directory, self.save_folder, self.file_name)
+        main_window.image_placeholder_label.hide()
+        self.show_image(image_path)
+
+
+    def contrast(self):
+        self.image = ImageEnhance.Contrast(self.image).enhance(1.2)
+        #the next 3 lines will be repeated
+        self.save_image()
+        image_path = os.path.join(working_directory, self.save_folder, self.file_name)
+        main_window.image_placeholder_label.hide()
+        self.show_image(image_path)
+
+
+    def blur(self):
+        self.image = self.image.filter(ImageFilter.BLUR) 
+        #the next 3 lines will be repeated
+        self.save_image()
+        image_path = os.path.join(working_directory, self.save_folder, self.file_name)
+        main_window.image_placeholder_label.hide()
+        self.show_image(image_path)
+
 
 #entrypoint; show and run the app
 if __name__ == "__main__":
